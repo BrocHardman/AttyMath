@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/bluegraygradient"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/AttymathLogo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="Logo"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".50"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="1.0"
+        app:srcCompat="@mipmap/attymath" />
+
+    <ImageButton
+        android:id="@+id/additionActivity"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toStartOf="@+id/subtractionActivity"
+        app:layout_constraintHeight_percent=".25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/AttymathLogo"
+        app:layout_constraintWidth_percent=".50"
+        app:srcCompat="@mipmap/plusred" />
+
+    <ImageButton
+        android:id="@+id/subtractionActivity"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".25"
+        app:layout_constraintTop_toTopOf="@+id/additionActivity"
+        app:layout_constraintWidth_percent=".50"
+        app:srcCompat="@mipmap/subtractgreen" />
+
+    <ImageButton
+        android:id="@+id/multiplicationActivity"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:adjustViewBounds="false"
+        android:background="@null"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/additionActivity"
+        app:layout_constraintWidth_percent=".50"
+        app:srcCompat="@mipmap/multiplicationpurple" />
+
+</android.support.constraint.ConstraintLayout>

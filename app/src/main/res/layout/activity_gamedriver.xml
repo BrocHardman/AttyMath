@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ConstraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context=".GameDriver">
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@mipmap/paper"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".90"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent=".90">
+
+        <TextView
+            android:id="@+id/topConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="casual"
+            android:gravity="center"
+            android:shadowColor="@android:color/holo_green_light"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/topNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="#00F44336"
+            android:fontFamily="casual"
+            android:gravity="right|top"
+            android:maxLines="1"
+            android:textSize="90dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timerText" />
+
+        <TextView
+            android:id="@+id/bottomNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="#00F34336"
+            android:fontFamily="casual"
+            android:gravity="right|top"
+            android:textSize="90dp"
+            app:layout_constraintEnd_toEndOf="@+id/topNum"
+            app:layout_constraintTop_toBottomOf="@+id/topNum" />
+
+        <EditText
+            android:id="@+id/userAnswer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:autoText="false"
+            android:background="@null"
+            android:ems="10"
+            android:fontFamily="casual"
+            android:gravity="right"
+            android:hint="..."
+            android:imeOptions="actionGo"
+            android:inputType="number"
+            android:textSize="90dp"
+            app:layout_constraintEnd_toEndOf="@+id/bottomNum"
+            app:layout_constraintStart_toStartOf="@+id/operatorSymbol"
+            app:layout_constraintTop_toBottomOf="@+id/bottomNum" />
+
+        <TextView
+            android:id="@+id/confirmUserAnswer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#00F34336"
+            android:gravity="right|top"
+            android:textSize="90dp"
+            app:layout_constraintBottom_toBottomOf="@+id/userAnswer"
+            app:layout_constraintEnd_toEndOf="@+id/userAnswer"
+            app:layout_constraintStart_toStartOf="@+id/userAnswer"
+            app:layout_constraintTop_toTopOf="@+id/userAnswer" />
+
+        <TextView
+            android:id="@+id/operatorSymbol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="44dp"
+            android:fontFamily="casual"
+            android:textColor="#8BC34A"
+            android:textSize="90dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/bottomNum"
+            app:layout_constraintEnd_toStartOf="@+id/bottomNum"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/bottomNum" />
+
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_green_light"
+            android:fontFamily="casual"
+            android:text="NEXT"
+            app:layout_constraintBottom_toBottomOf="@+id/confirmUserAnswer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/confirmUserAnswer"
+            app:layout_constraintTop_toTopOf="@+id/confirmUserAnswer" />
+
+        <Switch
+            android:id="@+id/timerSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2 Minute Timer"
+            android:textColor="@color/colorAccent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/timerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topConfirm" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/confettiGIF"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/purpleconfetti"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</android.support.constraint.ConstraintLayout>
+
