@@ -270,7 +270,7 @@ public class GameDriver extends AppCompatActivity {
      * amount of time.
      */
     private void timedrun(){
-        mathTimer = new CountDownTimer(1*30000, 1000) {
+        mathTimer = new CountDownTimer(2*60000, 1000) {
             public void onTick(long millisUntilFinished) {
                 timerText.setText("Time remaining: " +new SimpleDateFormat("mm:ss").format(new Date( millisUntilFinished)));
             }
