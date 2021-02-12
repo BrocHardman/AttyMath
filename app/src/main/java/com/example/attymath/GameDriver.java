@@ -2,10 +2,12 @@ package com.example.attymath;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -26,6 +28,7 @@ public class GameDriver extends AppCompatActivity {
     int calculatedanswer;
     int usernumber;
     int amountcompleted;
+    private int highscore = 0;
     char mathoperator;
 
     EditText userAnswer;
@@ -37,7 +40,7 @@ public class GameDriver extends AppCompatActivity {
     Switch timedrunToggle;
     CountDownTimer mathTimer;
     Button nextButton;
-
+    private SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class GameDriver extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         if(b != null)
             mathoperator = b.getChar("mathoperator");
+        mPrefs = getSharedPreferences("savehighscore",0);
+        highscore = mPrefs.getInt("HIGH_SCORE"+mathoperator,0);
 
         setContentView(R.layout.activity_gamedriver);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -182,7 +187,7 @@ public class GameDriver extends AppCompatActivity {
     private void showMessage(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Hey Atty! Lets see how fast you are!")
-                .setMessage("You have 2 minutes to solve as many problems as you can. I'll starts" +
+                .setMessage("You have 2 minutes to solve as many problems as you can. I'll start" +
                         " the time as soon as you click the start button.")
                 .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -222,9 +227,16 @@ public class GameDriver extends AppCompatActivity {
      * be synchronous because we still need to be able to compute problems at the same time.
      */
     private void goAgainDialog(){
+        String highscorestring = "Your highscore is " + highscore;
+        if(amountcompleted > highscore){
+            int oldhighscore = highscore;
+            highscore = amountcompleted;
+            highscorestring = "That beats your record of " + oldhighscore;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Great work Atty!")
-                .setMessage("You solved " +amountcompleted + " in just 2 minutes! Do you want to try again?")
+                .setMessage("You solved " +amountcompleted + " in just 2 minutes! "
+                        + highscorestring + " Do you want to try again?")
                 .setPositiveButton("Again!", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
@@ -258,7 +270,7 @@ public class GameDriver extends AppCompatActivity {
      * amount of time.
      */
     private void timedrun(){
-        mathTimer = new CountDownTimer(2*60000, 1000) {
+        mathTimer = new CountDownTimer(1*30000, 1000) {
             public void onTick(long millisUntilFinished) {
                 timerText.setText("Time remaining: " +new SimpleDateFormat("mm:ss").format(new Date( millisUntilFinished)));
             }
@@ -269,4 +281,29 @@ public class GameDriver extends AppCompatActivity {
             }
         }.start();
     }
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        outState.putString("HIGH_SCORE", String.valueOf(highscore));
+//        super.onSaveInstanceState(outState);
+//    }
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        highscore = Integer.valueOf(savedInstanceState.getString("HIGH_SCORE"));
+//    }
+
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor ed = mPrefs.edit();
+        ed.putInt("HIGH_SCORE"+mathoperator, highscore);
+        ed.commit();
+    }
+    protected void onResume(){
+        super.onResume();
+        mPrefs = getSharedPreferences("savehighscore",0);
+        highscore = mPrefs.getInt("HIGH_SCORE"+mathoperator,0);
+    }
+
 }
+
+
