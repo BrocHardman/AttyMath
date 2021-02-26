@@ -8,7 +8,6 @@
     android:background="@color/colorPrimary"
     tools:context=".GameDriver">
 
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
@@ -145,7 +144,6 @@
         app:layout_constraintHeight_percent="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 </android.support.constraint.ConstraintLayout>
 

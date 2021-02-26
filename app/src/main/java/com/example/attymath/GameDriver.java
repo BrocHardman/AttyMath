@@ -164,7 +164,7 @@ public class GameDriver extends AppCompatActivity {
             // Answer is CORRECT
             amountcompleted++;
             topConfirm.setTextColor(0xff99cc00);
-            topConfirm.setText("Great work Atty! " + usernumber + " is the right answe!", EditText.BufferType.EDITABLE);
+            topConfirm.setText("Great work Atty! " + usernumber + " is the right answer!", EditText.BufferType.EDITABLE);
             userAnswer.setVisibility(View.GONE);
             nextButton.setVisibility(View.VISIBLE);
 
@@ -227,15 +227,15 @@ public class GameDriver extends AppCompatActivity {
      * be synchronous because we still need to be able to compute problems at the same time.
      */
     private void goAgainDialog(){
-        String highscorestring = "Your highscore is " + highscore;
+        String highscorestring = "Your highscore is " + highscore + ".";
         if(amountcompleted > highscore){
             int oldhighscore = highscore;
             highscore = amountcompleted;
-            highscorestring = "That beats your record of " + oldhighscore;
+            highscorestring = "That beats your record of " + oldhighscore +"!";
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Great work Atty!")
-                .setMessage("You solved " +amountcompleted + " in just 2 minutes! "
+                .setMessage("You solved " + amountcompleted + " in just 2 minutes! "
                         + highscorestring + " Do you want to try again?")
                 .setPositiveButton("Again!", new DialogInterface.OnClickListener() {
 
@@ -303,7 +303,6 @@ public class GameDriver extends AppCompatActivity {
         mPrefs = getSharedPreferences("savehighscore",0);
         highscore = mPrefs.getInt("HIGH_SCORE"+mathoperator,0);
     }
-
 }
 
 
