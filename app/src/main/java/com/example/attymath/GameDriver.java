@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,11 +26,12 @@ import pl.droidsonroids.gif.GifImageView;
 public class GameDriver extends AppCompatActivity {
     int generatednum1;
     int generatednum2;
-    int calculatedanswer;
-    int usernumber;
+    float calculatedanswer;
+    float usernumber;
     int amountcompleted;
     private int highscore = 0;
     char mathoperator;
+    String userName;
 
     EditText userAnswer;
     TextView confirmation;
@@ -46,10 +48,22 @@ public class GameDriver extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
-        if(b != null)
-            mathoperator = b.getChar("mathoperator");
         mPrefs = getSharedPreferences("savehighscore",0);
+        if(b != null){
+            mathoperator = b.getChar("mathoperator");
+            userName = b.getString("USER_NAME","Error");
+            getSupportActionBar().setTitle(userName + "Math");
+            SharedPreferences.Editor ed = mPrefs.edit();
+            ed.putString("USER_NAME",userName);
+            ed.commit();
+
+        }
+
         highscore = mPrefs.getInt("HIGH_SCORE"+mathoperator,0);
+        // If user has already but in name bundle will contain it
+        if(userName == null || userName.equals("")){
+            userName = mPrefs.getString("USER_NAME","user");
+        }
 
         setContentView(R.layout.activity_gamedriver);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -107,6 +121,7 @@ public class GameDriver extends AppCompatActivity {
     }
 
     private void configureNextButton() {
+
         nextButton = (Button) findViewById(R.id.nextButton);
         nextButton.setVisibility(View.GONE);
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -159,12 +174,13 @@ public class GameDriver extends AppCompatActivity {
         if (usernumber != calculatedanswer) {
             // Answer is WRONG
             topConfirm.setTextColor(0xFFBB2222);
-            topConfirm.setText("Sorry Atty, " + usernumber + " is not the right answer", EditText.BufferType.EDITABLE);
+            topConfirm.setText("Sorry " + userName + ", " + usernumber + " is not the right answer",
+                    EditText.BufferType.EDITABLE);
         } else {
             // Answer is CORRECT
             amountcompleted++;
             topConfirm.setTextColor(0xff99cc00);
-            topConfirm.setText("Great work Atty! " + usernumber + " is the right answer!", EditText.BufferType.EDITABLE);
+            topConfirm.setText("Great work " + userName + "! " + usernumber + " is the right answer!", EditText.BufferType.EDITABLE);
             userAnswer.setVisibility(View.GONE);
             nextButton.setVisibility(View.VISIBLE);
 
@@ -186,7 +202,7 @@ public class GameDriver extends AppCompatActivity {
     // When time toggle activates show message explaining timer
     private void showMessage(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Hey Atty! Lets see how fast you are!")
+        builder.setTitle("Hey " + userName + "! Lets see how fast you are!")
                 .setMessage("You have 2 minutes to solve as many problems as you can. I'll start" +
                         " the time as soon as you click the start button.")
                 .setPositiveButton("Start", new DialogInterface.OnClickListener() {
@@ -234,7 +250,7 @@ public class GameDriver extends AppCompatActivity {
             highscorestring = "That beats your record of " + oldhighscore +"!";
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Great work Atty!")
+        builder.setTitle("Great work " + userName + "!")
                 .setMessage("You solved " + amountcompleted + " in just 2 minutes! "
                         + highscorestring + " Do you want to try again?")
                 .setPositiveButton("Again!", new DialogInterface.OnClickListener() {
@@ -282,26 +298,31 @@ public class GameDriver extends AppCompatActivity {
         }.start();
     }
 //    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
+//    public void onSaveInstanceState(Bundle outState) {
 //        outState.putString("HIGH_SCORE", String.valueOf(highscore));
+//        outState.putString("USER_NAME",userName);
 //        super.onSaveInstanceState(outState);
 //    }
 //    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//    public void onRestoreInstanceState(Bundle savedInstanceState) {
 //        super.onRestoreInstanceState(savedInstanceState);
 //        highscore = Integer.valueOf(savedInstanceState.getString("HIGH_SCORE"));
+//        userName = savedInstanceState.getString("USER_NAME","kid");
 //    }
 
     protected void onPause() {
         super.onPause();
         SharedPreferences.Editor ed = mPrefs.edit();
         ed.putInt("HIGH_SCORE"+mathoperator, highscore);
+        ed.putString("USER_NAME",userName);
         ed.commit();
+
     }
     protected void onResume(){
         super.onResume();
         mPrefs = getSharedPreferences("savehighscore",0);
         highscore = mPrefs.getInt("HIGH_SCORE"+mathoperator,0);
+        userName = mPrefs.getString("USER_NAME","user02");
     }
 }
 

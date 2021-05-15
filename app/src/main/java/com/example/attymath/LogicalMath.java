@@ -19,20 +19,29 @@ public class LogicalMath {
    private int generatednum2;
    private int maxNumber = 200;
    private int maxNumberMultiplication = 12;
-   private char mathoperator;
+   private int maxNumberDivision = 200;
+    private char mathoperator;
    public LogicalMath(char mathoperator){
         this.mathoperator = mathoperator;
    }
 
-    public int doMath (){
+    public float doMath (){
         Random rand = new Random();
         if(mathoperator == 'x'){
             maxNumber = maxNumberMultiplication;
+            generatednum1 = rand.nextInt(maxNumber);
+            generatednum2 = rand.nextInt(maxNumber);
+        }else if(mathoperator == '/'){
+            maxNumber = maxNumberDivision;
+            generatednum1 = rand.nextInt(maxNumber);
+            generatednum2 = rand.nextInt(maxNumber);
+        }else{
+            generatednum1 = rand.nextInt(maxNumber);
+            generatednum2 = rand.nextInt(maxNumber);
         }
-        generatednum1 = rand.nextInt(maxNumber);
-        generatednum2 = rand.nextInt(maxNumber);
 
-       int calculatedanswer = -1;
+
+       float calculatedanswer = -1;
 
         switch (mathoperator){
             case '+':
@@ -46,7 +55,15 @@ public class LogicalMath {
                 calculatedanswer = generatednum1 * generatednum2;
                 break;
             case '/':
-                break;
+                while(generatednum2 == 0){
+                    generatednum2 = rand.nextInt(maxNumber);
+                }
+                int dividend = Math.max(generatednum1,generatednum2);
+                int divisor = Math.min(generatednum1,generatednum2);
+                generatednum1 = (dividend - (dividend % divisor));
+                generatednum2 = divisor;
+
+                calculatedanswer = generatednum1 / generatednum2;
 
         }
         return calculatedanswer;
