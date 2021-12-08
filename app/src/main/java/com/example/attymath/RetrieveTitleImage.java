@@ -1,14 +1,9 @@
 package com.example.attymath;
 
-import android.app.AppComponentFactory;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,6 +15,7 @@ import java.util.Scanner;
 
 class RetrieveTitleImage extends AsyncTask<String, Integer, Boolean> {
     private static final String TAG = "Retrieve";
+
     @Override
     protected Boolean doInBackground(String... strings) {
 
@@ -31,8 +27,7 @@ class RetrieveTitleImage extends AsyncTask<String, Integer, Boolean> {
         try {
             Log.d(TAG, "Doing Get");
             URL url = new URL(strings[0]);
-            // open
-            // the connection in order to get the JSON data
+            // open the connection in order to get the JSON data
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             //Set the request to GET or POST as per the requirements
             conn.setRequestMethod("GET");
@@ -90,7 +85,7 @@ class RetrieveTitleImage extends AsyncTask<String, Integer, Boolean> {
             return false; // swallow a 404
         } catch (IOException e) {
             Log.d(TAG, "My IO Exception  ");
-            Log.d(TAG,e.getMessage());
+            Log.d(TAG, e.getMessage());
             return false; // swallow a 404
         }
 

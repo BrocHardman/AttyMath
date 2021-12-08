@@ -1,81 +1,72 @@
 package com.example.attymath;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
 import java.util.Random;
 
-import pl.droidsonroids.gif.GifImageView;
-
 public class LogicalMath {
-   private int generatednum1;
-   private int generatednum2;
-   private int maxNumber = 200;
-   private int maxNumberMultiplication = 12;
-   private int maxNumberDivision = 200;
-    private char mathoperator;
-   public LogicalMath(char mathoperator){
-        this.mathoperator = mathoperator;
-   }
+    private int generatedNum1;
+    private int generatedNum2;
+    private int maxNumber = 200;
+    private int maxNumberMultiplication = 12;
+    private int maxNumberDivision = 200;
+    private char mathOperator;
 
-    public float doMath (){
+    public LogicalMath(char mathOperator) {
+        this.mathOperator = mathOperator;
+    }
+
+    public float doMath() {
         Random rand = new Random();
-        if(mathoperator == 'x'){
+        if (mathOperator == 'x') {
             maxNumber = maxNumberMultiplication;
-            generatednum1 = rand.nextInt(maxNumber);
-            generatednum2 = rand.nextInt(maxNumber);
-        }else if(mathoperator == '/'){
+            generatedNum1 = rand.nextInt(maxNumber);
+            generatedNum2 = rand.nextInt(maxNumber);
+        } else if (mathOperator == '/') {
             maxNumber = maxNumberDivision;
-            generatednum1 = rand.nextInt(maxNumber);
-            generatednum2 = rand.nextInt(maxNumber);
-        }else{
-            generatednum1 = rand.nextInt(maxNumber);
-            generatednum2 = rand.nextInt(maxNumber);
+            generatedNum1 = rand.nextInt(maxNumber);
+            generatedNum2 = rand.nextInt(maxNumber);
+        } else {
+            generatedNum1 = rand.nextInt(maxNumber);
+            generatedNum2 = rand.nextInt(maxNumber);
         }
 
 
-       float calculatedanswer = -1;
+        float calculatedAnswer = -1;
 
-        switch (mathoperator){
+        switch (mathOperator) {
             case '+':
-                calculatedanswer = generatednum1 + generatednum2;
+                calculatedAnswer = generatedNum1 + generatedNum2;
                 break;
             case '-':
                 checkNumbers();
-                calculatedanswer = generatednum1 - generatednum2;
+                calculatedAnswer = generatedNum1 - generatedNum2;
                 break;
             case 'x':
-                calculatedanswer = generatednum1 * generatednum2;
+                calculatedAnswer = generatedNum1 * generatedNum2;
                 break;
             case '/':
-                while(generatednum2 == 0){
-                    generatednum2 = rand.nextInt(maxNumber);
+                while (generatedNum2 == 0) {
+                    generatedNum2 = rand.nextInt(maxNumber);
                 }
-                int dividend = Math.max(generatednum1,generatednum2);
-                int divisor = Math.min(generatednum1,generatednum2);
-                generatednum1 = (dividend - (dividend % divisor));
-                generatednum2 = divisor;
+                int dividend = Math.max(generatedNum1, generatedNum2);
+                int divisor = Math.min(generatedNum1, generatedNum2);
+                generatedNum1 = (dividend - (dividend % divisor));
+                generatedNum2 = divisor;
 
-                calculatedanswer = generatednum1 / generatednum2;
+                calculatedAnswer = generatedNum1 / generatedNum2;
 
         }
-        return calculatedanswer;
+        return calculatedAnswer;
     }
-    private void checkNumbers(){
-        if(generatednum1 < generatednum2){
-            int hold = generatednum1;
-            generatednum1 = generatednum2;
-            generatednum2 = hold;
+
+    private void checkNumbers() {
+        if (generatedNum1 < generatedNum2) {
+            int hold = generatedNum1;
+            generatedNum1 = generatedNum2;
+            generatedNum2 = hold;
         }
     }
+
     public int[] getNumbers() {
-        return new int[]{generatednum1,generatednum2};
+        return new int[]{generatedNum1, generatedNum2};
     }
 }

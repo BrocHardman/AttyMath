@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -16,7 +15,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,57 +22,65 @@ import java.util.Date;
 import pl.droidsonroids.gif.GifImageView;
 
 public class GameDriver extends AppCompatActivity {
-    int generatednum1;
-    int generatednum2;
-    float calculatedanswer;
-    float usernumber;
-    int amountcompleted;
+    private int generatedNum1;
+    private int generatedNum2;
+    private float calculatedAnswer;
+    private int userNumber;
+    private int amountCompleted;
     private int highscore = 0;
-    char mathoperator;
-    String userName;
+    private char mathOperator;
+    private String userName;
 
-    EditText userAnswer;
-    TextView confirmation;
-    TextView operatorSymbolText;
-    TextView topConfirm;
-    TextView timerText;
-    GifImageView confetti;
-    Switch timedrunToggle;
-    CountDownTimer mathTimer;
-    Button nextButton;
+    private EditText userAnswer;
+    private TextView confirmation;
+    private TextView operatorSymbolText;
+    private TextView topConfirm;
+    private TextView timerText;
+    private GifImageView confetti;
+    private Switch timedrunToggle;
+    private CountDownTimer mathTimer;
+    private Button nextButton;
     private SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle b = getIntent().getExtras();
-        mPrefs = getSharedPreferences("savehighscore",0);
-        if(b != null){
-            mathoperator = b.getChar("mathoperator");
-            userName = b.getString("USER_NAME","Error");
+        mPrefs = getSharedPreferences("savehighscore", 0);
+        if (b != null) {
+            mathOperator = b.getChar("mathoperator");
+            userName = b.getString("USER_NAME", "Error");
             getSupportActionBar().setTitle(userName + "Math");
             SharedPreferences.Editor ed = mPrefs.edit();
-            ed.putString("USER_NAME",userName);
+            ed.putString("USER_NAME", userName);
             ed.commit();
 
         }
 
-        highscore = mPrefs.getInt("HIGH_SCORE"+mathoperator,0);
+        highscore = mPrefs.getInt("HIGH_SCORE" + mathOperator, 0);
         // If user has already but in name bundle will contain it
-        if(userName == null || userName.equals("")){
-            userName = mPrefs.getString("USER_NAME","user");
+        if (userName == null || userName.equals("")) {
+            userName = mPrefs.getString("USER_NAME", "user");
         }
 
         setContentView(R.layout.activity_gamedriver);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         userAnswer = (EditText) findViewById(R.id.userAnswer);
+
         userAnswer.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER )
-                {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                     return checkAnswer(v);
+                } else if ((mathOperator == '+' || mathOperator == '-') && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    userAnswer.setSelection(0);
+                    if (keyCode == KeyEvent.KEYCODE_DEL) {
+                        if (userAnswer.length() != 0) {
+                            userAnswer.setSelection(1);
+                            return false;
+                        }
+                        return true;
+                    }
                 }
                 return false;
             }
@@ -85,17 +91,26 @@ public class GameDriver extends AppCompatActivity {
         confirmation.setVisibility(View.GONE);
 
         operatorSymbolText = (TextView) findViewById(R.id.operatorSymbol);
-        operatorSymbolText.setText(String.valueOf(mathoperator));
+        operatorSymbolText.setText(String.valueOf(mathOperator));
 
         topConfirm = (TextView) findViewById(R.id.topConfirm);
 
         timerText = (TextView) findViewById(R.id.timerText);
         timerText.setVisibility(View.GONE);
 
-        timedrunToggle =  (Switch)findViewById(R.id.timerSwitch);
+        timedrunToggle = (Switch) findViewById(R.id.timerSwitch);
 
         confetti = (GifImageView) findViewById(R.id.confettiGIF);
         confetti.setVisibility(View.GONE);
+
+        //TODO: clean this horrible mess up
+        if (mathOperator == '+' || mathOperator == '-') {
+            topConfirm.setText("Enter your answer from Right to Left");
+            userAnswer.setTextDirection(View.TEXT_DIRECTION_RTL);
+        } else {
+            topConfirm.setText("Enter your whole answer from Left to Right");
+            userAnswer.setTextDirection(View.TEXT_DIRECTION_LTR);
+        }
 
         configureNextButton();
         newEquation();
@@ -106,12 +121,12 @@ public class GameDriver extends AppCompatActivity {
                     showMessage();
                 } else {
                     // The toggle is disabled
-                    if (mathTimer != null){
+                    if (mathTimer != null) {
                         mathTimer.cancel();
                         timerText.setText("");
                         timerText.setVisibility(View.GONE);
                         topConfirm.setText("");
-                        amountcompleted = 0;
+                        amountCompleted = 0;
                     }
                 }
             }
@@ -131,56 +146,55 @@ public class GameDriver extends AppCompatActivity {
                 clearFields();
                 nextButton.setVisibility(View.GONE);
                 userAnswer.setVisibility(View.VISIBLE);
-
             }
         });
     }
 
-    private void clearFields(){
+    private void clearFields() {
         userAnswer.setText("", EditText.BufferType.EDITABLE);
         userAnswer.setVisibility(View.VISIBLE);
         //TODO: could probably take out the EDITABLE
-        topConfirm.setText("",EditText.BufferType.EDITABLE);
+        topConfirm.setText("", EditText.BufferType.EDITABLE);
         confirmation.setVisibility(View.GONE);
         confetti.setVisibility(View.GONE);
         nextButton.setVisibility(View.GONE);
     }
 
-    private void newEquation(){
-        LogicalMath logicalMath = new LogicalMath(mathoperator);
-        calculatedanswer = logicalMath.doMath();
-        generatednum1 = logicalMath.getNumbers()[0];
-        generatednum2 = logicalMath.getNumbers()[1];
+    private void newEquation() {
+        LogicalMath logicalMath = new LogicalMath(mathOperator);
+        calculatedAnswer = logicalMath.doMath();
+        generatedNum1 = logicalMath.getNumbers()[0];
+        generatedNum2 = logicalMath.getNumbers()[1];
         // this pads the number with a space to assure symbol doesn't make it look like
         // a negative number. If random bound number is increased into thousands this will not work
         TextView editText2 = (TextView) findViewById(R.id.bottomNum);
-        if(generatednum1 >= 10 && generatednum2 <= 9){
-            editText2.setText(" " + generatednum2, EditText.BufferType.EDITABLE);
-        }else{
-            editText2.setText("" + generatednum2, EditText.BufferType.EDITABLE);
+        if (generatedNum1 >= 10 && generatedNum2 <= 9) {
+            editText2.setText(" " + generatedNum2, EditText.BufferType.EDITABLE);
+        } else {
+            editText2.setText("" + generatedNum2, EditText.BufferType.EDITABLE);
         }
         TextView editText = (TextView) findViewById(R.id.topNum);
-        editText.setText("" + generatednum1, EditText.BufferType.EDITABLE);
+        editText.setText("" + generatedNum1, EditText.BufferType.EDITABLE);
     }
 
-    private boolean checkAnswer(View v){
-        confirmation.setText(""+ calculatedanswer,EditText.BufferType.EDITABLE);
+    private boolean checkAnswer(View v) {
+        confirmation.setText("" + calculatedAnswer, EditText.BufferType.EDITABLE);
         // try-catch for handling no input crash
-        try{
-            usernumber = Integer.valueOf(userAnswer.getText().toString());
-        }catch(Exception e){
+        try {
+            userNumber = Integer.valueOf(userAnswer.getText().toString());
+        } catch (Exception e) {
             return false;
         }
-        if (usernumber != calculatedanswer) {
+        if (userNumber != calculatedAnswer) {
             // Answer is WRONG
             topConfirm.setTextColor(0xFFBB2222);
-            topConfirm.setText("Sorry " + userName + ", " + usernumber + " is not the right answer",
+            topConfirm.setText("Sorry " + userName + ", " + userNumber + " is not the right answer",
                     EditText.BufferType.EDITABLE);
         } else {
             // Answer is CORRECT
-            amountcompleted++;
+            amountCompleted++;
             topConfirm.setTextColor(0xff99cc00);
-            topConfirm.setText("Great work " + userName + "! " + usernumber + " is the right answer!", EditText.BufferType.EDITABLE);
+            topConfirm.setText("Great work " + userName + "! " + userNumber + " is the right answer!", EditText.BufferType.EDITABLE);
             userAnswer.setVisibility(View.GONE);
             nextButton.setVisibility(View.VISIBLE);
 
@@ -196,11 +210,12 @@ public class GameDriver extends AppCompatActivity {
         try {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        } catch(Exception ignored) {
+        } catch (Exception ignored) {
         }
     }
+
     // When time toggle activates show message explaining timer
-    private void showMessage(){
+    private void showMessage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Hey " + userName + "! Lets see how fast you are!")
                 .setMessage("You have 2 minutes to solve as many problems as you can. I'll start" +
@@ -210,7 +225,7 @@ public class GameDriver extends AppCompatActivity {
                         clearFields();
                         newEquation();
                         nextButton.setVisibility(View.GONE);
-                        amountcompleted = 0;
+                        amountCompleted = 0;
                         timerText.setText("Ready?");
                         timerText.setVisibility(View.VISIBLE);
                         dialog.cancel();
@@ -230,8 +245,8 @@ public class GameDriver extends AppCompatActivity {
 //                })
                 // not allowing touch away from box
                 .setCancelable(false);
-                AlertDialog dialog = builder.create();
-                dialog.show();
+        AlertDialog dialog = builder.create();
+        dialog.show();
 
     }
 
@@ -242,21 +257,21 @@ public class GameDriver extends AppCompatActivity {
      * if CountDownTimer has a pid that we could check and create dialog on return but would need to
      * be synchronous because we still need to be able to compute problems at the same time.
      */
-    private void goAgainDialog(){
+    private void goAgainDialog() {
         String highscorestring = "Your highscore is " + highscore + ".";
-        if(amountcompleted > highscore){
+        if (amountCompleted > highscore) {
             int oldhighscore = highscore;
-            highscore = amountcompleted;
-            highscorestring = "That beats your record of " + oldhighscore +"!";
+            highscore = amountCompleted;
+            highscorestring = "That beats your record of " + oldhighscore + "!";
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Great work " + userName + "!")
-                .setMessage("You solved " + amountcompleted + " in just 2 minutes! "
+                .setMessage("You solved " + amountCompleted + " in just 2 minutes! "
                         + highscorestring + " Do you want to try again?")
                 .setPositiveButton("Again!", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        amountcompleted = 0;
+                        amountCompleted = 0;
                         clearFields();
                         newEquation();
                         topConfirm.setTextColor(0xFFBB2222);
@@ -270,7 +285,7 @@ public class GameDriver extends AppCompatActivity {
                 .setNegativeButton("I'm Done", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        amountcompleted = 0;
+                        amountCompleted = 0;
                         timedrunToggle.setChecked(false);
                         dialog.cancel();
                     }
@@ -285,10 +300,10 @@ public class GameDriver extends AppCompatActivity {
      * Starts a timer. Will be used to keep track of how many problems are solved in a specified
      * amount of time.
      */
-    private void timedrun(){
-        mathTimer = new CountDownTimer(2*60000, 1000) {
+    private void timedrun() {
+        mathTimer = new CountDownTimer(2 * 60000, 1000) {
             public void onTick(long millisUntilFinished) {
-                timerText.setText("Time remaining: " +new SimpleDateFormat("mm:ss").format(new Date( millisUntilFinished)));
+                timerText.setText("Time remaining: " + new SimpleDateFormat("mm:ss").format(new Date(millisUntilFinished)));
             }
 
             public void onFinish() {
@@ -297,32 +312,21 @@ public class GameDriver extends AppCompatActivity {
             }
         }.start();
     }
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        outState.putString("HIGH_SCORE", String.valueOf(highscore));
-//        outState.putString("USER_NAME",userName);
-//        super.onSaveInstanceState(outState);
-//    }
-//    @Override
-//    public void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        highscore = Integer.valueOf(savedInstanceState.getString("HIGH_SCORE"));
-//        userName = savedInstanceState.getString("USER_NAME","kid");
-//    }
 
     protected void onPause() {
         super.onPause();
         SharedPreferences.Editor ed = mPrefs.edit();
-        ed.putInt("HIGH_SCORE"+mathoperator, highscore);
-        ed.putString("USER_NAME",userName);
+        ed.putInt("HIGH_SCORE" + mathOperator, highscore);
+        ed.putString("USER_NAME", userName);
         ed.commit();
 
     }
-    protected void onResume(){
+
+    protected void onResume() {
         super.onResume();
-        mPrefs = getSharedPreferences("savehighscore",0);
-        highscore = mPrefs.getInt("HIGH_SCORE"+mathoperator,0);
-        userName = mPrefs.getString("USER_NAME","user02");
+        mPrefs = getSharedPreferences("savehighscore", 0);
+        highscore = mPrefs.getInt("HIGH_SCORE" + mathOperator, 0);
+        userName = mPrefs.getString("USER_NAME", "user02");
     }
 }
 
